@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Universal Crawler · Local Research Library</title><link rel="stylesheet" href="/app.css"><script src="/app.js" defer></script></head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark">UC</span><div>Universal Crawler<small>Local Research Library</small></div></div>
+    <nav aria-label="Main Navigation">
+      <button class="nav-button active" data-view="library"><span>▤</span>Collect & Library</button>
+      <button class="nav-button" data-view="jobs"><span>◷</span>Tasks <b id="active-count"></b></button>
+      <button class="nav-button" data-view="tools"><span>⚙</span>Tools & Settings</button>
+    </nav>
+    <div class="sidebar-bottom"><span class="connection-dot" id="connection-dot"></span><span id="connection">Connecting to local service...</span><small>Identify web resources<br>Download on demand</small></div>
+  </aside>
+  <main class="workspace">
+    <header class="topbar"><span id="page-label">Collector Workbench</span><span class="local-label">Local Runtime <span>·</span> Personal Research</span></header>
+    <section id="library-view" class="view">
+      <div class="collection-area">
+        <div class="section-heading"><div><h1>Discover Resources & Download on Demand</h1><p>Enter URL, DOI, or keywords. Multiple URLs can be entered on separate lines.</p></div><span class="keyboard-hint">Ctrl + Enter to Start</span></div>
+        <form id="collect-form">
+          <label class="sr-only" for="collection-input">URL or Keywords</label>
+          <textarea id="collection-input" placeholder="https://… or research topic" rows="3" required></textarea>
+          <div class="input-options">
+            <div class="mode-buttons" role="group" aria-label="Collection Type"><button type="button" data-mode="auto" class="selected">Auto</button><button type="button" data-mode="web">Web</button><button type="button" data-mode="paper">Paper</button><button type="button" data-mode="video">Video / Audio</button></div>
+            <button class="primary" id="collect-button" type="submit">Identify Resources <span>↗</span></button>
+          </div>
+          <div class="source-options"><label for="search-region">Source Region</label><select id="search-region"><option value="all">All Sources</option><option value="domestic">Domestic Sites / Platforms</option><option value="foreign">International Sites / Platforms</option></select><span>Classified by source site, content language unrestricted; URLs auto-classified</span></div>
+          <div class="source-options"><label for="search-strategy">Search Strategy</label><select id="search-strategy"><option value="broad">Broad · Multi-platform</option><option value="focused">Focused · Few Results</option></select><label for="search-platform">Platform</label><select id="search-platform"><option value="">All Major Platforms + Other Public Sites</option></select></div>
+          <details class="advanced"><summary>Collection Options</summary><div class="advanced-fields">
+            <label>Max Results <input id="max-results" type="number" min="1" max="200" value="60"></label>
+            <label>English Related Query <input id="english-query" type="text" maxlength="1000" placeholder="Optional; e.g. lateral thinking puzzles"></label>
+            <label class="checkbox-label"><input id="bilingual" type="checkbox" checked>Expand English related results</label>
+            <label>Web Rendering <select id="render"><option value="auto">Auto Detect</option><option value="always">Standalone Edge Browser</option><option value="session">Reuse Edge Login Session</option><option value="never">Static Pages Only</option></select></label>
+            <label class="checkbox-label"><input id="crawl-toggle" type="checkbox">Follow internal links</label>
+            <label>Max Pages <input id="max-pages" type="number" min="1" max="50" value="20"></label>
+            <label>Link Depth <input id="depth" type="number" min="0" max="2" value="1"></label>
+          </div><p>Discovered resources are displayed first, then supplemented with dynamic pages. Select files or videos to download, supporting select-all and batch download. Full text, PDF text, or subtitles are not automatically extracted. Access and download permissions depend on the actual site results.</p></details>
+        </form>
+        <div id="live-task" class="live-task" hidden></div>
+      </div>
+      <div class="library-toolbar"><div><h2>Library</h2><span id="item-count">0 items</span></div><div class="export-controls"><select id="export-format" aria-label="Export format"><option value="markdown">Markdown</option><option value="json">JSON</option><option value="csv">CSV</option><option value="bibtex">BibTeX</option></select><button id="export-all" class="secondary">Export Library</button></div></div>
+      <p id="export-location" class="export-location" aria-live="polite"></p>
+      <div class="filter-bar"><label class="search-box"><span>⌕</span><input id="library-search" type="search" placeholder="Filter saved library items; use input box above for web search" aria-label="Search library"></label><select id="region-filter" aria-label="Library partition"><option value="all">All Libraries</option><option value="domestic">Domestic Library</option><option value="foreign">International Library</option><option value="unknown">Uncategorized</option></select><select id="kind-filter" aria-label="Resource type"><option value="">All Types</option><option value="web">Web</option><option value="paper">Paper</option><option value="pdf">PDF</option><option value="video">Video</option><option value="playlist">Playlist</option><option value="audio">Audio</option><option value="feed">Feed</option><option value="text">Text</option><option value="file">Other Files</option></select></div>
+      <div id="library-list" class="library-list" aria-live="polite"></div>
+    </section>
+    <section id="jobs-view" class="view padded" hidden><div class="section-heading"><div><h1>Tasks</h1><p>View progress, sources, errors, and download results.</p></div><button id="refresh-jobs" class="secondary">Refresh</button></div><div id="job-list"></div></section>
+    <section id="tools-view" class="view padded" hidden><div class="section-heading"><div><h1>Tools & Settings</h1><p>Installation and configuration status displayed alongside actual collection results.</p></div></div><form id="settings-form"><h2>Storage Location</h2><label for="storage-path">Full Directory Path</label><div class="storage-picker"><input id="storage-path" type="text" required aria-label="Storage location"><button id="choose-storage" type="button" class="secondary">Choose Folder</button></div><p class="storage-help">Resource indexes are stored in the 'Materials' directory of each partition; selected files are saved to 'Downloads', and exported files to 'Exports'. Changing location affects future tasks; existing files remain in their original location.</p><p id="storage-current" class="storage-help"></p><p id="index-path" class="storage-help"></p><h2 class="runtime-heading">Runtime Settings</h2><label>Browser Resource Directory<input id="browser-path" type="text"></label><label>Dedicated Edge Profile Directory<input id="browser-profile" type="text"></label><label>Login URL<input id="browser-login-url" type="url" value="https://www.bilibili.com/"></label><button id="open-browser-login" type="button" class="secondary">Open Dedicated Edge for Login</button><p class="storage-help">No extension required. Log in via the dedicated window and close it; crawler will reuse login state. Regular browser data is untouched.</p><div class="settings-inline"><label>Domain Request Interval (sec)<input id="domain-interval" type="number" min="1" max="30" value="2"></label><label>Default Download Limit (MB, 0 for unlimited)<input id="download-limit" type="number" min="0" value="0"></label></div><button type="submit" class="primary">Save Settings</button><p id="platform-note"></p></form><div id="tool-list"></div></section>
+  </main>
+  <aside id="inspector" class="inspector" hidden><div class="inspector-top"><span>Item Preview</span><button id="close-inspector" aria-label="Close Preview">×</button></div><div id="inspector-content"></div></aside>
+</div>
+<div id="toast" class="toast" role="status" hidden></div>
+</body></html>

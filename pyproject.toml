@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "universal-crawler"
+version = "0.1.0"
+description = "Local personal research library for web, papers and video, with desktop and MCP interfaces"
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = ["Development Status :: 3 - Alpha", "Intended Audience :: Education"]
+requires-python = ">=3.12,<3.13"
+
+[tool.setuptools.packages.find]
+include = ["crawler_system*"]
+
+[tool.setuptools.package-data]
+crawler_system = ["static/*"]
+

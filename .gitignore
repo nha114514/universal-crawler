@@ -1,0 +1,31 @@
+.venv/
+.serena/
+data/
+dist/
+build/pyinstaller/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.log
+evidence/*.private.json
+Crawler.exe
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite3
+*.db
+*.pem
+*.key
+
+
+# Local diagnostic reports and screenshots
+evidence/*
+!evidence/README.md
+tests/*results.json
+
+# Python build outputs
+*.egg-info/
+*.whl
+build/lib/
+build/bdist.*/
